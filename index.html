@@ -5,6 +5,8 @@
     <link rel="manifest" href="../manifest.json">
     <script src="../authorization/authorization.js"></script>
     <script src="../order/order.js"></script>
+    <script src="../order/orderui.js"></script>
+    <script src="../device/camera/camera.js"></script>
     <script src="../push/sw_manager.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, height=device-height,
@@ -17,7 +19,24 @@
     <script src="/wedding/ui/semantic.min.js"></script>
     <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId=p6I0cSqRjuBeMPOpkqR6"></script>
   </head>
+  <style type="text/css">
+    #callCamera {
+      background-color:transparent;
+      border:0px;
+      width:120px;
+      height:120px;
+      position:fixed;
+      right:0;
+      bottom:0;
+      z-index:9;
+    }
+
+    #cameraImage {
+      width:100px;
+    }
+  </style>
   <body>
+    <button id="callCamera"><img id = "cameraImage" src="/wedding/images/etc/camera_button.png"></button>
 	 <!----------------------------------------------- NAVI -------------------------------------->
     <div class="ui segment" id="top">
       <div class="ui sticky">
@@ -33,7 +52,7 @@
         <div class="ui pink ribbon label">
           LOVE
         </div>
-        <img src="/wedding/images/etc/main.jpg">  
+        <img src="/wedding/images/etc/main.jpg">
       </div>
       <br>
       <br>
@@ -126,6 +145,26 @@
         .sticky()
       ;
       register();
+
+      orderPage.pageLoad("축하의 한마디 남겨주세요.");
+      var callCameraButton = document.querySelector("#callCamera");
+      callCameraButton.addEventListener("click", function (event) {
+        camera.getImageFromCamera(function (canvas) {
+          orderPage.show(canvas, function () {
+            canvas.toBlob(function(blob) {
+              var od = new OrderInfo ();
+              od.items = new OrderItem ();
+              od.userId = 1234;
+              od.blob = blob;
+              od.option = orderPage.getMessage();
+              order(od).then (function (e) {
+                console.log (e);
+              });
+              orderPage.hide();
+            });
+          });
+        });
+      });
     </script>
   </body>
 </html>
