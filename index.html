@@ -153,15 +153,17 @@
         camera.getImageFromCamera(function (canvas) {
           orderPage.show(canvas, function () {
             canvas.toBlob(function(blob) {
-              var od = new OrderInfo ();
-              od.items = new OrderItem ();
-              od.userId = 1234;
-              od.blob = blob;
-              od.option = orderPage.getMessage();
-              order(od).then (function (e) {
-                console.log (e);
+              getUuid().then(function (authInfo) {
+                var od = new OrderInfo ();
+                od.items = new OrderItem ();
+                od.userId = authInfo.uuid;
+                od.blob = blob;
+                od.option = orderPage.getMessage();
+                order(od).then (function (e) {
+                  console.log ("upload result: " + e);
+                });
+                orderPage.hide();
               });
-              orderPage.hide();
             });
           });
         });
