@@ -150,20 +150,18 @@
       orderPage.pageLoad("축하의 한마디 남겨주세요.");
       var callCameraButton = document.querySelector("#callCamera");
       callCameraButton.addEventListener("click", function (event) {
-        camera.getImageFromCamera(function (canvas) {
+        camera.getImageFromCamera(function (canvas, file) {
           orderPage.show(canvas, function () {
-            canvas.toBlob(function(blob) {
-              getUuid().then(function (authInfo) {
-                var od = new OrderInfo ();
-                od.items = new OrderItem ();
-                od.userId = authInfo.uuid;
-                od.blob = blob;
-                od.option = orderPage.getMessage();
-                order(od).then (function (e) {
-                  console.log ("upload result: " + e);
-                });
-                orderPage.hide();
+            getUuid().then(function (authInfo) {
+              var od = new OrderInfo ();
+              od.items = new OrderItem ();
+              od.userId = authInfo.uuid;
+              od.blob = file;
+              od.option = orderPage.getMessage();
+              order(od).then (function (e) {
+                console.log ("upload result: " + e);
               });
+              orderPage.hide();
             });
           });
         });
