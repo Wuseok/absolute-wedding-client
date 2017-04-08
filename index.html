@@ -38,7 +38,7 @@
   </style>
   <body>
     <button id="callCamera"><img id = "cameraImage" src="/wedding/images/etc/camera_button.png"></button>
-	 <!----------------------------------------------- NAVI -------------------------------------->
+   <!----------------------------------------------- NAVI -------------------------------------->
     <div class="ui segment" id="top">
       <div class="ui sticky">
         <div class="ui orange fluid three item inverted menu">
@@ -48,7 +48,7 @@
         </div>
       </div>
       <br>
-	  <!----------------------------------------------- MAIN -------------------------------------->
+    <!----------------------------------------------- MAIN -------------------------------------->
       <div class="ui fluid image">
         <div class="ui pink ribbon label">
           LOVE
@@ -59,7 +59,7 @@
       <br>
       <img class="ui centered fluid image" src="/wedding/images/etc/invitation.jpg">
       <br>
-	  <!----------------------------------------------- MAP -------------------------------------->
+    <!----------------------------------------------- MAP -------------------------------------->
       <div id="map">
         <br>
         <br>
@@ -71,16 +71,16 @@
       <div id="naver_map" style="width:100%;height:300px;"></div>
       <script>
         var mapOptions = {
-        	center: new naver.maps.LatLng(37.496978, 127.0267254),
-        	zoom: 10
+          center: new naver.maps.LatLng(37.496978, 127.0267254),
+          zoom: 10
         };
         var map = new naver.maps.Map('naver_map', mapOptions);
         var marker = new naver.maps.Marker({
-        	position: new naver.maps.LatLng(37.496978, 127.0267254),
-        	map: map
+          position: new naver.maps.LatLng(37.496978, 127.0267254),
+          map: map
         });
       </script>
-	  <!----------------------------------------------- GALLERY -------------------------------------->
+    <!----------------------------------------------- GALLERY -------------------------------------->
       <div id="gallery">
         <br>
         <br>
@@ -89,19 +89,44 @@
         <h3 class="ui orange center aligned header">Wedding Gallery</h1>
       </div>
       <br>
-      <div class="ui two doubling  cards">
+      <div class="ui two doubling  cards" id="here">
         <div class="card">
-          <div class="image ">
+          <div class="image">
+            <img id="gallery1">
+          </div>
+        </div>
+        <div class="card">
+          <div class="image">
+            <img id="gallery2">
+          </div>
+        </div>
+        <div class="card">
+          <div class="image">
+            <img id="gallery3">
+          </div>
+        </div>
+        <div class="card">
+          <div class="image">
+            <img id="gallery4">
+          </div>
+        </div>
+        <div class="card">
+          <div class="image" >
+            <img id="gallery5">
+          </div>
+        </div>
+       <div class="card">
+          <div class="image">
             <img src="/wedding/images/studio/studio_1.jpg">
           </div>
         </div>
-		<div class="card">
+        <div class="card">
           <div class="image">
             <img src="/wedding/images/studio/studio_2.jpg">
           </div>
         </div>
         <div class="card">
-          <div class="image ">
+          <div class="image">
             <img src="/wedding/images/studio/studio_3.jpg">
           </div>
         </div>
@@ -111,7 +136,7 @@
           </div>
         </div>
         <div class="card">
-          <div class="image">
+          <div class="image" >
             <img src="/wedding/images/studio/studio_5.jpg">
           </div>
         </div>
@@ -140,12 +165,66 @@
             <img src="/wedding/images/studio/studio_10.jpg">
           </div>
         </div>
-	</div>
+  </div>
     <script>
       $('.ui.sticky')
-        .sticky()
-      ;
+        .sticky();
       register();
+      
+      var autoOrient = function(orientation, img) {
+        switch (orientation) {
+          case 3: 
+            img.style.transform = 'rotate(180deg)'; 
+            break;
+          case 5: 
+            img.style.transform = 'rotate(90deg)'; 
+            break;
+          case 6: 
+            img.style.transform = 'rotate(90deg)'; 
+            break;
+          case 7: img.style.transform = 'rotate(-90deg)'; break;
+          case 8: img.style.transform = 'rotate(-90deg)'; break;
+          default: ;break; 
+        }
+      }
+      
+      var loadImg = function(targetImg, srcUrl) {
+          var xhr1 = new XMLHttpRequest();
+          xhr1.open("GET", srcUrl);
+          xhr1.responseType = "blob";//force the HTTP response, response-type header to be blob
+          xhr1.onload = function()
+          {
+              camera.getOrientation(xhr1.response, function(orientation) {
+                autoOrient(orientation, targetImg);
+                targetImg.src = srcUrl;
+              });
+          }
+          xhr1.send();
+      }
+      
+      var refreshPhoto = function(r) {
+        orderList().then(function (list) {
+          var img = new Array();
+          img.push(document.getElementById("gallery1")); 
+          img.push(document.getElementById("gallery2"));
+          img.push(document.getElementById("gallery3"));
+          img.push(document.getElementById("gallery4"));
+          img.push(document.getElementById("gallery5"));
+
+          for(var i = 0; i < 5; i+=1) {
+            loadImg(img[i], list[i]);
+          }
+
+          img1.onload = function() {
+            return Promise.resolve(r);
+          }
+        });
+      }
+
+      var showPhoto = function(r) {
+        location.href = "#";
+        location.href = "#gallery";
+      }
 
       orderPage.pageLoad("축하의 한마디 남겨주세요.");
       var callCameraButton = document.querySelector("#callCamera");
@@ -158,14 +237,13 @@
               od.userId = authInfo.uuid;
               od.blob = file;
               od.option = orderPage.getMessage();
-              order(od).then (function (e) {
-                console.log ("upload result: " + e);
-              });
+              order(od).then(refreshPhoto).then(showPhoto);
               orderPage.hide();
             });
           });
         });
       });
+      window.onload = refreshPhoto;
     </script>
   </body>
 </html>
