@@ -170,6 +170,61 @@
       $('.ui.sticky')
         .sticky();
       register();
+      
+      var autoOrient = function(orientation, img) {
+        switch (orientation) {
+          case 3: 
+            img.style.transform = 'rotate(180deg)'; 
+            break;
+          case 5: 
+            img.style.transform = 'rotate(90deg)'; 
+            break;
+          case 6: 
+            img.style.transform = 'rotate(90deg)'; 
+            break;
+          case 7: img.style.transform = 'rotate(-90deg)'; break;
+          case 8: img.style.transform = 'rotate(-90deg)'; break;
+          default: ;break; 
+        }
+      }
+      
+      var loadImg = function(targetImg, srcUrl) {
+          var xhr1 = new XMLHttpRequest();
+          xhr1.open("GET", srcUrl);
+          xhr1.responseType = "blob";//force the HTTP response, response-type header to be blob
+          xhr1.onload = function()
+          {
+              camera.getOrientation(xhr1.response, function(orientation) {
+                autoOrient(orientation, targetImg);
+                targetImg.src = srcUrl;
+              });
+          }
+          xhr1.send();
+      }
+      
+      var refreshPhoto = function(r) {
+        orderList().then(function (list) {
+          var img = new Array();
+          img.push(document.getElementById("gallery1")); 
+          img.push(document.getElementById("gallery2"));
+          img.push(document.getElementById("gallery3"));
+          img.push(document.getElementById("gallery4"));
+          img.push(document.getElementById("gallery5"));
+
+          for(var i = 0; i < 5; i+=1) {
+            loadImg(img[i], list[i]);
+          }
+
+          img1.onload = function() {
+            return Promise.resolve(r);
+          }
+        });
+      }
+
+      var showPhoto = function(r) {
+        location.href = "#";
+        location.href = "#gallery";
+      }
 
 
       var refreshPhoto = function(r) {
